@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: mysql:8.1
+    container_name: spring-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: react_spring
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./spring-security-crud-jwt
+    container_name: springboot-app-jwt
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/react_spring?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend-react
+    container_name: react-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
