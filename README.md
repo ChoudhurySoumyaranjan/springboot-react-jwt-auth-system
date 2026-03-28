@@ -6,24 +6,6 @@ A production-ready full-stack application demonstrating **secure authentication 
 
 ---
 
-# 🌐 Live Demo *(Add after deployment)*
-
-* Frontend: http://your-frontend-url
-* Backend API: http://your-backend-url
-* Swagger UI: https://your-backend-url/swagger-ui.html
-
----
-
-# 📸 Screenshots
-
-*(Add images in /screenshots folder)*
-
-* 🔐 Login Page
-* 📊 Dashboard
-* 📄 Swagger API Docs
-
----
-
 # 🏗️ Architecture Overview
 
 * Stateless Authentication using JWT
