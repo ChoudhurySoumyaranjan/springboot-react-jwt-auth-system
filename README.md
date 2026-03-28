@@ -1,196 +1,277 @@
-# 🚀 Spring Boot JWT Secure CRUD API
+# 🚀 Full Stack JWT Authentication System
 
-Production-ready REST API built with **Spring Boot 3**, **Spring Security (JWT)**, **MySQL 8**, **Docker Compose**, **HTTPS (SSL)**, and **Swagger OpenAPI documentation**.
+**React + Spring Boot + MySQL + Docker + JWT Security**
 
-This project demonstrates enterprise-level authentication, authorization, refresh token rotation, role-based access control, and containerized deployment.
+A production-ready full-stack application demonstrating **secure authentication and authorization** using JWT with refresh token rotation, built with modern technologies and deployed using Docker.
+
+---
+
+# 🌐 Live Demo *(Add after deployment)*
+
+* Frontend: http://your-frontend-url
+* Backend API: http://your-backend-url
+* Swagger UI: https://your-backend-url/swagger-ui.html
+
+---
+
+# 📸 Screenshots
+
+*(Add images in /screenshots folder)*
+
+* 🔐 Login Page
+* 📊 Dashboard
+* 📄 Swagger API Docs
 
 ---
 
 # 🏗️ Architecture Overview
 
-- Stateless JWT Authentication
-- Refresh Token Rotation with DB persistence
-- Role-Based Authorization (USER / ADMIN)
-- Method-level security with `@PreAuthorize`
-- Global Exception Handling
-- HTTPS enabled (SSL keystore)
-- Dockerized multi-container setup
-- Swagger API Documentation
-- Pagination support
-- Production-ready security configuration
+* Stateless Authentication using JWT
+* Refresh Token stored securely in HttpOnly cookies
+* Role-Based Access Control (USER / ADMIN)
+* Secure REST APIs with Spring Security
+* React frontend with protected routes
+* Dockerized multi-container architecture
 
 ---
 
 # 🛠️ Tech Stack
 
-| Technology | Version |
-|------------|----------|
-| Java | 17 |
-| Spring Boot | 3.x |
-| Spring Security | 6.x |
-| Hibernate / JPA | 6.x |
-| MySQL | 8.1 |
-| JWT | io.jsonwebtoken |
-| Docker | Multi-stage build |
-| OpenAPI | springdoc-openapi |
-| Maven | 3.9 |
+| Layer    | Technology                                |
+| -------- | ----------------------------------------- |
+| Frontend | React, Redux Toolkit, Axios, Tailwind CSS |
+| Backend  | Spring Boot 3, Spring Security 6          |
+| Database | MySQL 8                                   |
+| Auth     | JWT (Access + Refresh Token)              |
+| DevOps   | Docker, Docker Compose                    |
+| API Docs | Swagger (OpenAPI)                         |
 
 ---
 
 # 🔐 Security Features
 
 ### ✔ JWT Access Token
-- HS256 signature
-- Includes:
-    - roles
-    - employeeId
-    - fullName
-    - phoneNumber
-    - issuer validation
-    - audience validation
 
-### ✔ Refresh Token (Secure Rotation)
-- Stored in DB
-- HttpOnly Cookie
-- Auto rotation on refresh
-- Old token invalidation
-- Expiry validation
+* Bearer token authentication
+* Includes user roles and metadata
+* Stateless and scalable
+
+### ✔ Refresh Token Rotation
+
+* Stored in database
+* Sent via HttpOnly cookie
+* Auto refresh on expiration
+* Old tokens invalidated
 
 ### ✔ Role-Based Authorization
 
-| Role | Access |
-|------|--------|
-| USER | Read Products |
-| ADMIN | Create / Update / Delete Products |
-| ADMIN | Manage Users |
+| Role  | Access               |
+| ----- | -------------------- |
+| USER  | Read data            |
+| ADMIN | Full CRUD operations |
 
 ---
 
-# 🌐 API Base URL
+# 🔄 Authentication Flow
 
-Swagger UI:https://localhost:5000/swagger-ui.html
+1. **Register** → `/api/auth/register`
+2. **Login** → `/api/auth/login`
 
-OpenAPI JSON:https://localhost:5000/api-docs
+   * Returns:
 
+     * Access Token (JWT)
+     * Refresh Token (Cookie)
+3. **Access APIs**
 
----
+   * Use header:
 
-# 🔑 Authentication Flow
+     ```
+     Authorization: Bearer <token>
+     ```
+4. **Refresh Token**
 
-## 1️⃣ Register:- 
-        POST /api/auth/register
+   * `/api/auth/refresh-token`
+5. **Logout**
 
-## 2️⃣ Login:- 
-        POST /api/auth/login
-
-    Returns:
-    - Access Token (Bearer)
-      - Refresh Token (HttpOnly cookie)
-      - User Details
-
-## 3️⃣ Access Protected APIs:-
-    Add header: Authorization: Bearer <access_token>
-
-## 4️⃣ Refresh Token:-
-        POST /api/auth/refresh-token
-    Uses cookie automatically.
-
-## 5️⃣ Logout:-
-        POST /api/auth/logout
-    Invalidates refresh token.
+   * Invalidates refresh token
 
 ---
 
-# 📦 Product APIs:-
-        Base:
-    /api/v1/products
+# 📦 API Endpoints
 
-| Method | Endpoint | Role Required |
-|--------|----------|---------------|
-| GET | / | USER |
-| GET | /{id} | USER |
-| POST | / | ADMIN |
-| PUT | /{id} | ADMIN |
-| DELETE | /{id} | ADMIN |
-| GET | /{id}/items | USER |
+## 🔑 Auth APIs
+
+| Method | Endpoint                |
+| ------ | ----------------------- |
+| POST   | /api/auth/register      |
+| POST   | /api/auth/login         |
+| POST   | /api/auth/refresh-token |
+| POST   | /api/auth/logout        |
 
 ---
 
-# 👥 User Management APIs:-
-        Base:
-    /api/v1
+## 📊 Product APIs
 
+Base: `/api/v1/products`
 
-| Method | Endpoint | Role Required |
-|--------|----------|---------------|
-| GET | /users | ADMIN |
-| GET | /loadUser/{id} | Authenticated |
-| PUT | /updateUser/{id} | Authenticated |
-| DELETE | /deleteUser/{id} | ADMIN |
+| Method | Endpoint | Role  |
+| ------ | -------- | ----- |
+| GET    | /        | USER  |
+| GET    | /{id}    | USER  |
+| POST   | /        | ADMIN |
+| PUT    | /{id}    | ADMIN |
+| DELETE | /{id}    | ADMIN |
+
+---
+
+## 👥 User APIs
+
+Base: `/api/v1`
+
+| Method | Endpoint         | Role          |
+| ------ | ---------------- | ------------- |
+| GET    | /users           | ADMIN         |
+| GET    | /loadUser/{id}   | Authenticated |
+| PUT    | /updateUser/{id} | Authenticated |
+| DELETE | /deleteUser/{id} | ADMIN         |
 
 ---
 
 # 🗄️ Database Design
 
 ### User
-- id
-- firstName
-- lastName
-- email (unique)
-- password (BCrypt)
-- roles (USER / ADMIN)
-- createdAt
-- updatedAt
+
+* id
+* email
+* password (BCrypt)
+* roles
+* createdAt
 
 ### Product
-- id
-- productName
-- createdBy
-- createdOn
-- modifiedBy
-- modifiedOn
 
-### Item
-- id
-- product_id (FK)
-- quantity
+* id
+* name
+* createdBy
 
 ### RefreshToken
-- id
-- token
-- expiryDate
-- user_id (FK)
+
+* token
+* expiryDate
+* user_id
 
 ---
 
-# 🐳 Docker Deployment
+# ⚙️ Environment Variables
 
-## Build & Run
+| Variable                   | Description   |
+| -------------------------- | ------------- |
+| SPRING_DATASOURCE_URL      | DB connection |
+| SPRING_DATASOURCE_USERNAME | DB username   |
+| SPRING_DATASOURCE_PASSWORD | DB password   |
+| JWT_SECRET                 | Secret key    |
+
+---
+
+# 🐳 Docker Setup
+
+## ▶ Run Full Application
 
 ```bash
+docker compose up --build
+```
 
-docker compose up --build 
-    ## 🐳 Services
+## 📦 Services
 
-- springboot-app
-- springboot-mysql
-
----
-
-## 🏗 Multi-Stage Dockerfile
-
-- Maven build stage
-- Lightweight JRE runtime
-- SSL keystore included
-- Port 5000 exposed
+* Backend (Spring Boot)
+* Frontend (React + Nginx)
+* MySQL Database
 
 ---
 
-## 🔒 HTTPS Configuration
+# 🏗️ Docker Architecture
 
-- PKCS12 keystore
-- SSL enabled
-- All requests require secure channel
+* Multi-stage build (Maven + JRE)
+* React build served via Nginx
+* MySQL with persistent volume
+
+---
+
+# 📂 Project Structure
+
+```
+backend/
+ ├── controller/
+ ├── service/
+ ├── repository/
+ ├── security/
+ ├── config/
+
+frontend/
+ ├── components/
+ ├── pages/
+ ├── redux/
+ ├── api/
+```
+
+---
+
+# ⚡ Quick Start (Local Setup)
+
+```bash
+# Clone repo
+git clone https://github.com/yourusername/springboot-react-jwt-auth-system.git
+
+# Run using Docker
+docker compose up --build
+
+# Open browser
+http://localhost:3000
+```
+
+---
+
+# 🧠 Key Highlights
+
+* Secure JWT Authentication with refresh token rotation
+* Production-ready Spring Security setup
+* Clean frontend architecture with Redux
+* Fully Dockerized environment
+* Scalable and maintainable design
+
+---
+
+# 🧪 Testing
+
+* Tested APIs using Postman
+* Swagger UI available for interactive testing
+
+---
+
+# 🎯 Why This Project?
+
+This project demonstrates real-world backend and frontend skills including:
+
+* Secure authentication mechanisms
+* REST API development
+* State management in React
+* Containerized deployment
+* Production-level architecture
+
+---
+
+# 👨‍💻 Author
+
+**Your Name**
+
+* GitHub: https://github.com/yourusername
+* LinkedIn: your-link
+
+---
+
+# ⭐ Show your support
+
+If you like this project, give it a ⭐ on GitHub!
+
 
 
 
